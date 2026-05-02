@@ -467,6 +467,14 @@
       *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.001ms !important; }
     }
   </style>
+<script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.150.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.150.0/examples/jsm/"
+    }
+  }
+</script>
 </head>
 <body>
   <main class="app-root">
@@ -1411,7 +1419,9 @@ function showShadow(iI,iM,iO){
       return { destroy: function () { cancelAnimationFrame(rafId); window.removeEventListener('resize', onResize); document.removeEventListener('keydown', onKey); mountEl.innerHTML = ''; }, reset: resetGame };
     }
   </script>
-  <script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     const PARADOX_ENDINGS = {
                 pure_stillness: {
                     title: '空寂入定',
@@ -1484,15 +1494,6 @@ function showShadow(iI,iM,iO){
       mountEl.innerHTML =
         '<div class="paradox-app"><div class="paradox-hud paradox-info"><span id="rule-count">情缘：3</span><br><span id="still-time">空寂：0s</span></div><div class="paradox-hud paradox-incense"><div id="censer-text">香初燃 · 30息</div><div class="incense-meter"><span id="incense-fill"></span></div></div><div class="paradox-hud paradox-entropy" id="entropy-display">情障 H = 0.02</div><div class="paradox-message" id="message"></div><div class="temptation-pulse" id="temptation-dot"></div><div class="cert-overlay" id="cert-overlay"><div class="cert-panel"><div id="cert-title"></div><div id="cert-poem"></div><div id="cert-stats"></div><div id="cert-quote"></div><div id="cert-analysis"></div><button class="cert-btn" id="cert-download" type="button">下载判词</button><button class="cert-btn" id="cert-close" type="button">再入幻境</button></div></div></div>';
       const app = mountEl.querySelector('.paradox-app');
-      let THREE, OrbitControls;
-      try {
-        THREE = await import('https://unpkg.com/three@0.150.0/build/three.module.js');
-        const controlsMod = await import('https://unpkg.com/three@0.150.0/examples/jsm/controls/OrbitControls.js');
-        OrbitControls = controlsMod.OrbitControls;
-      } catch (err) {
-        mountEl.innerHTML = '<div class="paradox-fallback">太虚幻境需要加载 Three.js。当前网络或本地策略阻止了 3D 库加载；RMTI 与风月宝鉴仍可正常使用。<br><small>' + escapeHTML(err.message || err) + '</small></div>';
-        return { destroy: function () { mountEl.innerHTML = ''; }, reset: function () {} };
-      }
       const MAX_RULES = 110;
       const GAME_DURATION = 30;
       const state = { rules: [], connections: [], totalClicks: 0, totalHoverCreates: 0, stillTime: 0, lastActivity: Date.now(), frozen: false, entropy: 0, countdown: GAME_DURATION, hoverStreak: 0, maxHoverStreak: 0, rapidClicks: 0, lastClickTime: 0, trimmedCount: 0, idleTotal: 0, peakStillness: 0, gameStartTime: Date.now(), phase: 'playing', mirrorFlipCount: 0, lastPromptAt: 0 };
